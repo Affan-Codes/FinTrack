@@ -3,6 +3,8 @@ import express from "express";
 import cors from "cors";
 import { Env } from "./config/env.config";
 import connectDB from "./config/database.config";
+import authRoutes from "./routes/auth.route";
+import { errorHandler } from "./middlewares/errorHandler.middleware";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -15,6 +17,10 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(`${BASE_PATH}/auth`, authRoutes);
+
+app.use(errorHandler);
 
 app.listen(Env.PORT, async () => {
   await connectDB();
