@@ -10,6 +10,8 @@ import { errorHandler } from "./middlewares/errorHandler.middleware";
 import userRoutes from "./routes/user.route";
 import { passportAuthenticateJwt } from "./config/passport.config";
 import transactionRoutes from "./routes/transaction.route";
+import { initializeCrons } from "./crons";
+import reportRoutes from "./routes/report.route";
 
 const app = express();
 const BASE_PATH = Env.BASE_PATH;
@@ -28,15 +30,16 @@ app.use(
 app.use(`${BASE_PATH}/auth`, authRoutes);
 app.use(`${BASE_PATH}/user`, passportAuthenticateJwt, userRoutes);
 app.use(`${BASE_PATH}/transaction`, passportAuthenticateJwt, transactionRoutes);
+app.use(`${BASE_PATH}/report`, passportAuthenticateJwt, reportRoutes);
 
 app.use(errorHandler);
 
 app.listen(Env.PORT, async () => {
   await connectDB();
 
-  // if (Env.NODE_ENV === "development") {
-  // await initializeCrons();
-  // }
+  if (Env.NODE_ENV === "development") {
+    await initializeCrons();
+  }
 
   console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
 });
